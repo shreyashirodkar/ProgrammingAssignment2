@@ -1,0 +1,42 @@
+For both EC2 instances use role with these permissions:
+
+
+SET UP MODEL
+
+on an EC2 instance run the following commands:
+pip3 install flintrock
+flintrock configure (or vi /home/ec2-user/.config/flintrock/config.yaml) -----PUT EXAMPLE ON GIT
+	* set key-name to the key pair for ec2
+	* set identity-file to the pem file for key
+	* instance-type t2.medium
+	* region = us-east-1
+	* ami = ami-0f9fc25dd2506cf6d
+	* set num slaves = 4
+flintrock launch my-spark-1
+flintrock login my-spark-1
+pip3 install numpy
+add winemodel.py
+spark-submit --packages org.apache.hadoop:hadoop-aws:3.1.1 winemodel.py
+
+
+
+
+RUNNING PREDICTION APPLICATION
+
+WITH DOCKER
+
+on ec2 instance:
+install docker on instance
+sudo docker pull shreshir22/mytest2:wineprediction
+sudo docker run -v <Your Path Here>:/data/TrainingDataset.csv shreshir22/mytest2:wineprediction
+
+
+WITHOUT DOCKER
+
+sudo pip3 install pyspark
+sudo pip3 install pandas 
+add winequalityprediction.py  and TestDataset.csv
+mkdir data
+mv TestingDataset /data/TrainingDataset.csv
+add winemodel.model rename directory as model
+python winequalityprediction.py
