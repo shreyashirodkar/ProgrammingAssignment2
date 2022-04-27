@@ -3,6 +3,7 @@ FROM python:3.8
 WORKDIR /usr/src/app
 
 COPY . .
+COPY /winemodel.model/ /model/
 
 RUN pip install --no-cache-dir -r requirements.txt
 

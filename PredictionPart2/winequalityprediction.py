@@ -6,7 +6,7 @@ from pyspark.ml.classification import RandomForestClassificationModel
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql.types import StructType,DoubleType,IntegerType
 from pyspark.sql.functions import isnull,when,count,col
-
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 
 def vectorAssemble(df,df_features):
     df_features.remove("quality")
@@ -22,10 +22,10 @@ def evaluation(df):
 
 def dataprep():
     colNames=["fixed acidity","volatile acidity","citric acid","residual sugar","chlorides","free sulfur dioxide","total sulfur dioxide","density","pH","sulphates","alcohol","quality"]
-    #df = pandas.read_csv('/data/TrainingDataset.csv',sep=';',names=colNames,header=None,skiprows=1)
+    
     schema = StructType().add("fixed acidity",DoubleType(),True).add("volatile acidity",DoubleType(),True).add("citric acid",DoubleType(),True).add("residual sugar",DoubleType(),True).add("chlorides",DoubleType(),True).add("free sulfur dioxide",IntegerType(),True).add("total sulfur dioxide", IntegerType(),True).add("density",DoubleType(),True).add("pH",DoubleType(),True).add("sulphates",DoubleType(),True).add("alcohol",DoubleType(),True).add("quality",IntegerType(),True)
     df = spark.read.format("csv").option("header",True).schema(schema).option("delimiter",";").load("/data/TrainingDataset.csv")
-    #df = df.replace('?',None).dropna(how='any')
+    df = df.replace('?',None).dropna(how='any')
     testdf = vectorAssemble(df,colNames).withColumnRenamed("quality","label")
     return testdf
     
@@ -38,10 +38,10 @@ if __name__ == "__main__":
         .appName("PythonPA2")\
         .getOrCreate()
     
-    print("Hello World!")
+    print("Predicting wine quality...")
     test = dataprep()
     
-    model = RandomForestClassificationModel.load("/winemodel.model")
+    model = RandomForestClassificationModel.load("/model")
     df = model.transform(test)
     evaluation(df)
     
